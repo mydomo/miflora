@@ -8,6 +8,7 @@ import sys
 
 from miflora.miflora_poller import MiFloraPoller, \
     MI_CONDUCTIVITY, MI_MOISTURE, MI_LIGHT, MI_TEMPERATURE, MI_BATTERY
+from miflora import miflora_scanner, available_backends, BluepyBackend, GatttoolBackend, PygattBackend
 
 def valid_miflora_mac(mac, pat=re.compile(r"C4:7C:8D:[0-9A-F]{2}:[0-9A-F]{2}:[0-9A-F]{2}")):
     """Check for valid mac adresses."""
@@ -37,7 +38,7 @@ def main():
 
     print ('hci1')
     backend = 'GatttoolBackend'
-    poll(C4:7C:8D:65:E2:1A, backend)
+    poll('C4:7C:8D:65:E2:1A', backend)
 
 
 if __name__ == '__main__':
