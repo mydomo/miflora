@@ -38,7 +38,7 @@ def main():
 
     """
 
-    poll('C4:7C:8D:65:E2:1A', GatttoolBackend, 'hci1')
+    poll('C4:7C:8D:65:E2:1A', GatttoolBackend, hci1)
 
 
 if __name__ == '__main__':
