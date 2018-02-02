@@ -34,13 +34,13 @@ def main():
     """Main function.
 
     """
-    print ("hci0")
-    poll("C4:7C:8D:65:E2:1A","hci0")
+    print ('hci0')
+    poll('C4:7C:8D:65:E2:1A','hci0')
 
     sleep(1)
 
-    print ("hci1")
-    poll("C4:7C:8D:65:E2:1A","hci1")
+    print ('hci1')
+    poll('C4:7C:8D:65:E2:1A','hci1')
 
 
 if __name__ == '__main__':
