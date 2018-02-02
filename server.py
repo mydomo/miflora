@@ -17,9 +17,11 @@ def valid_miflora_mac(mac, pat=re.compile(r"C4:7C:8D:[0-9A-F]{2}:[0-9A-F]{2}:[0-
     return mac
 
 
-def poll():
-    """Poll data from the sensor."""
-    poller = MiFloraPoller('C4:7C:8D:65:E2:1A', GatttoolBackend, adapter='hci1')
+def poll(mac, backend, adapter):
+    """Poll data from the sensor.
+       MiFloraPoller library can read the following parameters: mac, backend, cache_timeout=600, retries=3, adapter='hci0'
+    """
+    poller = MiFloraPoller(mac, backend, adapter)
     print("Getting data from Mi Flora")
     print("FW: {}".format(poller.firmware_version()))
     print("Name: {}".format(poller.name()))
@@ -36,8 +38,7 @@ def main():
 
     """
 
-    print ('hci1')
-    poll()
+    poll('C4:7C:8D:65:E2:1A', GatttoolBackend, 'hci1')
 
 
 if __name__ == '__main__':
