@@ -1,4 +1,4 @@
-# miflora - Library for Xiaomi Mi plant sensor
+# miflora - Library for Xiaomi Mi plant sensor (FORKED, WORK IN PROGRESS)
 
 [![PyPI](https://img.shields.io/pypi/v/miflora.svg)](https://pypi.python.org/pypi/miflora)
 [![PyPI](https://img.shields.io/pypi/status/miflora.svg)](https://pypi.python.org/pypi/miflora)
