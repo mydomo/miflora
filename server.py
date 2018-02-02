@@ -36,7 +36,7 @@ def main():
     """
 
     print ('hci1')
-    backend = GatttoolBackend
+    backend = 'GatttoolBackend'
     poll('C4:7C:8D:65:E2:1A', backend)
 
 
