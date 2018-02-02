@@ -17,9 +17,9 @@ def valid_miflora_mac(mac, pat=re.compile(r"C4:7C:8D:[0-9A-F]{2}:[0-9A-F]{2}:[0-
     return mac
 
 
-def poll(mac, backend):
+def poll(mac):
     """Poll data from the sensor."""
-    poller = MiFloraPoller(mac, backend)
+    poller = MiFloraPoller('C4:7C:8D:65:E2:1A')
     print("Getting data from Mi Flora")
     print("FW: {}".format(poller.firmware_version()))
     print("Name: {}".format(poller.name()))
@@ -37,8 +37,7 @@ def main():
     """
 
     print ('hci1')
-    backend = 'GatttoolBackend'
-    poll('C4:7C:8D:65:E2:1A', backend)
+    poll()
 
 
 if __name__ == '__main__':
