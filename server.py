@@ -17,7 +17,7 @@ def valid_miflora_mac(mac, pat=re.compile(r"C4:7C:8D:[0-9A-F]{2}:[0-9A-F]{2}:[0-
     return mac
 
 
-def poll(mac):
+def poll():
     """Poll data from the sensor."""
     poller = MiFloraPoller('C4:7C:8D:65:E2:1A')
     print("Getting data from Mi Flora")
