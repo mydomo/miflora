@@ -19,7 +19,7 @@ def valid_miflora_mac(mac, pat=re.compile(r"C4:7C:8D:[0-9A-F]{2}:[0-9A-F]{2}:[0-
 
 def poll():
     """Poll data from the sensor."""
-    poller = MiFloraPoller('C4:7C:8D:65:E2:1A', GatttoolBackend)
+    poller = MiFloraPoller('C4:7C:8D:65:E2:1A', GatttoolBackend, adapter='hci1')
     print("Getting data from Mi Flora")
     print("FW: {}".format(poller.firmware_version()))
     print("Name: {}".format(poller.name()))
