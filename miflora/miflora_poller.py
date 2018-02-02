@@ -44,7 +44,7 @@ class MiFloraPoller(object):
         self.lock = Lock()
         self._firmware_version = None
         self.battery = None
-        print ('ADAPTER USED: ' + str(adapter))
+        print 'ADAPTER USED: ' + str(adapter)
 
     def name(self):
         """Return the name of the sensor."""
