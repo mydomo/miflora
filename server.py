@@ -27,7 +27,7 @@ def poll(mac, backend, ble_adapter):
     print("Name: {}".format(poller.name()))
     print("Temperature: {}".format(poller.parameter_value(MI_TEMPERATURE)))
     print("Moisture: {}".format(poller.parameter_value(MI_MOISTURE)))
-    print("Light: {}".format(poller.parameter_value(MI_LIGHT)))
+    print("Light: {}".format(abs(poller.parameter_value(MI_LIGHT))))
     print("Conductivity: {}".format(poller.parameter_value(MI_CONDUCTIVITY)))
     print("Battery: {}".format(poller.parameter_value(MI_BATTERY)))
 
