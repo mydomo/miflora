@@ -23,7 +23,6 @@ def poll(mac, backend, ble_adapter):
     """
     poller = MiFloraPoller(mac, backend, adapter=ble_adapter)
     print("Getting data from Mi Flora")
-    print("Adapter: {}".format(adapter))
     print("FW: {}".format(poller.firmware_version()))
     print("Name: {}".format(poller.name()))
     print("Temperature: {}".format(poller.parameter_value(MI_TEMPERATURE)))
