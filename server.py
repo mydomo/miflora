@@ -21,7 +21,7 @@ def poll():
     """Poll data from the sensor.
        MiFloraPoller library can read the following parameters: mac, backend, cache_timeout=600, retries=3, adapter='hci0'
     """
-    poller = MiFloraPoller('C4:7C:8D:65:E2:1A', GatttoolBackend)
+    poller = MiFloraPoller('C4:7C:8D:65:E2:1A', GatttoolBackend, adapter='hci1')
     print("Getting data from Mi Flora")
     print("FW: {}".format(poller.firmware_version()))
     print("Name: {}".format(poller.name()))
