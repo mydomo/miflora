@@ -65,12 +65,12 @@ def socket_input_process(input_string):
             mode = 'beacon_data'
 
 def input_string_config(string):
-    output = string.replace("miflora_client: ", "").strip().split('$')
+    output = string.replace("miflora_client: ", "").strip().split('$$')
     return output[0]
 
 
 def input_string_devices(string):
-    output = string.replace("miflora_client: ", "").strip().split('$')
+    output = string.replace("miflora_client: ", "").strip().split('$$')
     return output[1]
 
 
@@ -111,7 +111,7 @@ def main():
     """
 
     #poll('C4:7C:8D:65:E2:1A', GatttoolBackend, 'hci1')
-    input_string_fake = "miflora_client: 180,hci1$C4:7C:8D:65:E2:1A,C4:7C:8D:65:E2:2A"
+    input_string_fake = "miflora_client: 180,hci1$$C4:7C:8D:65:E2:1A,C4:7C:8D:65:E2:2A"
 
     print(input_string_config(input_string_fake))
     print(input_string_devices(input_string_fake))
