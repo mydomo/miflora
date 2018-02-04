@@ -27,6 +27,8 @@ miflora_plant = {}
 
 def socket_input_process(input_string):
     global miflora_plant
+    global srv_backend
+    global srv_adapter
 
     if input_string.startswith('miflora_client:'):
 
