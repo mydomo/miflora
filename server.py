@@ -97,7 +97,7 @@ def poll(mac, backend, ble_adapter):
     """ Poll data from the sensor.
         MiFloraPoller library can read the following parameters: mac, backend, cache_timeout=600, retries=3, adapter='hci0'
     """
-    poller = MiFloraPoller(mac, GatttoolBackend, adapter=ble_adapter)
+    poller = MiFloraPoller(mac, GatttoolBackend)
 
     polled_device_fw = poller.firmware_version()
     polled_device_name = poller.name()
