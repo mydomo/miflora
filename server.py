@@ -49,17 +49,9 @@ def socket_input_process(input_string):
                 # check if the device requested has already polled
                 requested_device = str(miflora_plant.get(device, "Never"))
 
-                # if device requested was polled before extract all the data
+                # if device requested was polled before check timestamp
                 if requested_device != "Never":
                     requested_device_data = device_string_cleaned(requested_device).split(',')
-
-                    requested_device_fw = requested_device_data[0]
-                    requested_device_name = requested_device_data[1]
-                    requested_device_temp = requested_device_data[2]
-                    requested_device_moist = requested_device_data[3]
-                    requested_device_light = requested_device_data[4]
-                    requested_device_cond = requested_device_data[5]
-                    requested_device_batt = requested_device_data[6]
                     requested_device_timestamp = requested_device_data[7]
 
                     # check time since last poll
@@ -67,33 +59,11 @@ def socket_input_process(input_string):
                     # time difference is greater than the interval between polling.
                     if time_difference >= (srv_polling_time * 60):
                         # poll again
-                        poller = MiFloraPoller(device, GatttoolBackend, adapter=srv_adapter)
+                        poller = poll(device, srv_backend, adapter=srv_adapter)
 
-                        polled_device_fw = poller.firmware_version()
-                        polled_device_name = poller.name()
-                        polled_device_temp = poller.parameter_value(MI_TEMPERATURE)
-                        polled_device_moist = poller.parameter_value(MI_MOISTURE)
-                        polled_device_light = abs(poller.parameter_value(MI_LIGHT))
-                        polled_device_cond = poller.parameter_value(MI_CONDUCTIVITY)
-                        polled_device_batt = poller.parameter_value(MI_BATTERY)
-                        polled_device_timestamp = int(time.time())
-
-                        miflora_plant[device] = [polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
-
-                if requested_device == "Never":
+                if (requested_device == "Never"):
                     # poll for the first time this device
-                    poller = MiFloraPoller(device, GatttoolBackend, adapter=srv_adapter)
-
-                    polled_device_fw = poller.firmware_version()
-                    polled_device_name = poller.name()
-                    polled_device_temp = poller.parameter_value(MI_TEMPERATURE)
-                    polled_device_moist = poller.parameter_value(MI_MOISTURE)
-                    polled_device_light = abs(poller.parameter_value(MI_LIGHT))
-                    polled_device_cond = poller.parameter_value(MI_CONDUCTIVITY)
-                    polled_device_batt = poller.parameter_value(MI_BATTERY)
-                    polled_device_timestamp = int(time.time())
-
-                    miflora_plant[device] = [polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
+                    poller = poll(device, srv_backend, adapter=srv_adapter)
 
 def input_string_stripped(string):
     output = string.replace("miflora_client: ", "").strip()
@@ -123,25 +93,23 @@ def valid_miflora_mac(mac, pat=re.compile(r"C4:7C:8D:[0-9A-F]{2}:[0-9A-F]{2}:[0-
 
 
 def poll(mac, backend, ble_adapter):
+    global miflora_plant
     """ Poll data from the sensor.
         MiFloraPoller library can read the following parameters: mac, backend, cache_timeout=600, retries=3, adapter='hci0'
     """
     poller = MiFloraPoller(mac, backend, adapter=ble_adapter)
-    """ DEMO MODE: PRINT OUTS THE RESULT
-    print("Getting data from Mi Flora")
-    print("FW: {}".format(poller.firmware_version()))
-    print("Name: {}".format(poller.name()))
-    print("Temperature: {}".format(poller.parameter_value(MI_TEMPERATURE)))
-    print("Moisture: {}".format(poller.parameter_value(MI_MOISTURE)))
-    print("Light: {}".format(abs(poller.parameter_value(MI_LIGHT))))
-    print("Conductivity: {}".format(poller.parameter_value(MI_CONDUCTIVITY)))
-    print("Battery: {}".format(poller.parameter_value(MI_BATTERY)))
-    """
-    temperature_value = poller.parameter_value(MI_TEMPERATURE)
-    moisture_value = poller.parameter_value(MI_MOISTURE)
-    light_value = abs(poller.parameter_value(MI_LIGHT))
-    conductivity_value = poller.parameter_value(MI_CONDUCTIVITY)
-    battery_value = poller.parameter_value(MI_BATTERY)
+
+    polled_device_fw = poller.firmware_version()
+    polled_device_name = poller.name()
+    polled_device_temp = poller.parameter_value(MI_TEMPERATURE)
+    polled_device_moist = poller.parameter_value(MI_MOISTURE)
+    polled_device_light = abs(poller.parameter_value(MI_LIGHT))
+    polled_device_cond = poller.parameter_value(MI_CONDUCTIVITY)
+    polled_device_batt = poller.parameter_value(MI_BATTERY)
+    polled_device_timestamp = int(time.time())
+
+    miflora_plant[device] = [polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
+
 
 
 def main():
