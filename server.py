@@ -149,6 +149,7 @@ def poll(mac, backend, ble_adapter):
 
 
 def main():
+    global miflora_plant
     """ Main function.
 
     """
@@ -157,7 +158,8 @@ def main():
     input_string_fake = "miflora_client: 180,GatttoolBackend,hci1$|$C4:7C:8D:65:E2:1A"
 
     while True:
-        print(str(socket_input_process(input_string_fake)))
+        socket_input_process(input_string_fake)
+        print(str(miflora_plant))
         sleep(1)
 
 
