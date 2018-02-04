@@ -182,7 +182,6 @@ def poll(mac, backend, ble_adapter):
 
 
 def main():
-    global miflora_plant
     """ Main function.
 
     """
@@ -192,6 +191,7 @@ def main():
 
     while True:
         socket_input_process(input_string_fake)
+        print(miflora_plant)
         time.sleep(1)
 
 
