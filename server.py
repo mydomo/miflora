@@ -97,12 +97,13 @@ def socket_input_process(input_string):
 
 def device_poller():
     global miflora_plant
+    print miflora_plant
 
-    for device in miflora_plant:
-        print(str(device))
-        for value in device:
-            print(str(value))
-        print ('------------')
+   # for device in miflora_plant:
+    #    print(str(device))
+     #   for value in device:
+      #      print(str(value))
+       # print ('------------')
         #poller = poll(device, srv_backend, srv_adapter)
 
 
