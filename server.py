@@ -24,10 +24,13 @@ socket_ip = '0.0.0.0'
 socket_port = 54321
 
 global miflora_plant
-global srv_backend
-global srv_adapter
-global srv_polling_err
 miflora_plant = {}
+global srv_backend
+srv_backend = ''
+global srv_adapter
+srv_adapter = ''
+global srv_polling_err
+srv_polling_err = ''
 
 def socket_input_process(input_string):
 
