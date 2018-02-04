@@ -97,14 +97,26 @@ def socket_input_process(input_string):
 
 def device_poller():
     global miflora_plant
-    print (miflora_plant)
+    while True:
+        for device in miflora_plant:
+            requested_device = str(miflora_plant.get(device, 'Never'))
+            if requested_device != 'Never':
+                # device exist, gather all the available data.
+                requested_device_data = device_string_cleaned(requested_device).split(',')
 
-   # for device in miflora_plant:
-    #    print(str(device))
-     #   for value in device:
-      #      print(str(value))
-       # print ('------------')
-        #poller = poll(device, srv_backend, srv_adapter)
+                requested_device_status = requested_device_data[0]
+                requested_device_fw = requested_device_data[1]
+                requested_device_name = requested_device_data[2]
+                requested_device_temp = requested_device_data[3]
+                requested_device_moist = requested_device_data[4]
+                requested_device_light = requested_device_data[5]
+                requested_device_cond = requested_device_data[6]
+                requested_device_batt = requested_device_data[7]
+                requested_device_timestamp = requested_device_data[8]
+
+                if requested_device_status != 'OK':
+                    poller = poll(device, srv_backend, srv_adapter)
+        time.sleep(1)
 
 
 def input_string_stripped(string):
@@ -178,9 +190,10 @@ def main():
 
     while True:
         socket_input_process(input_string_fake)
-        device_poller()
         time.sleep(1)
 
 
 if __name__ == '__main__':
-    main()
+    Thread(target=main).start()
+    Thread(target=device_poller).start()
+
