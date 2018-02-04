@@ -156,7 +156,7 @@ def main():
     while True:
         socket_input_process(input_string_fake)
         print (miflora_plant)
-        sleep(1)
+        time.sleep(1)
 
 
 if __name__ == '__main__':
