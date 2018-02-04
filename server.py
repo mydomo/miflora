@@ -61,7 +61,7 @@ def socket_input_process(input_string):
                     polled_device_batt = '?'
                     polled_device_timestamp = int(time.time())
 
-                    miflora_plant[mac] = [polled_device_status,polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
+                    miflora_plant[device] = [polled_device_status,polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
 
                 
                 if requested_device != 'Never':
@@ -93,7 +93,7 @@ def socket_input_process(input_string):
                             polled_device_batt = requested_device_batt
                             polled_device_timestamp = int(time.time())
 
-                            miflora_plant[mac] = [polled_device_status,polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
+                            miflora_plant[device] = [polled_device_status,polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
 
 def device_poller():
     global miflora_plant
