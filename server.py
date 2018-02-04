@@ -24,11 +24,12 @@ socket_ip = '0.0.0.0'
 socket_port = 54321
 
 miflora_plant = {}
+global miflora_plant
+global srv_backend
+global srv_adapter
+global srv_polling_err
 
 def socket_input_process(input_string):
-    global miflora_plant
-    global srv_backend
-    global srv_adapter
 
     if input_string.startswith('miflora_client:'):
 
@@ -40,6 +41,8 @@ def socket_input_process(input_string):
         srv_backend = server_configuration[1]
         # adapter (default: hci0)
         srv_adapter = server_configuration[2]
+        # time to wait before polling again a device that had an error during the reading (seconds)
+        srv_polling_err = server_configuration[3]
 
         # split each MAC address in a list in order to be processed
         devices_to_analize = input_string_devices(input_string).split(',')
@@ -53,7 +56,7 @@ def socket_input_process(input_string):
 
                 if (requested_device == 'Never'):
                 # device is asked for the first time, need to get the values .
-                    polled_device_status = 'TOBEUPDATED'
+                    polled_device_status = 'REQUESTED'
                     polled_device_fw = '?'
                     polled_device_name = '?'
                     polled_device_temp = '?'
@@ -98,7 +101,6 @@ def socket_input_process(input_string):
                             miflora_plant[device] = [polled_device_status,polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
 
 def device_poller():
-    global miflora_plant
     while True:
         for device in miflora_plant:
             requested_device = str(miflora_plant.get(device, 'Never'))
@@ -116,8 +118,13 @@ def device_poller():
                 requested_device_batt = requested_device_data[7]
                 requested_device_timestamp = requested_device_data[8]
 
-                if requested_device_status != 'OK':
+                if (requested_device_status == 'REQUESTED') or (requested_device_status == 'EXPIRED'):
                     poller = poll(device, srv_backend, srv_adapter)
+                if requested_device_status == 'ERROR':
+                    time_difference = int(time.time()) - int(requested_device_timestamp)
+                    if (time_difference >= (srv_polling_err * 60)):
+                        poller = poll(device, srv_backend, srv_adapter)
+
         time.sleep(1)
 
 
@@ -149,7 +156,6 @@ def valid_miflora_mac(mac, pat=re.compile(r"C4:7C:8D:[0-9A-F]{2}:[0-9A-F]{2}:[0-
 
 
 def poll(mac, backend, ble_adapter):
-    global miflora_plant
     """ Poll data from the sensor.
         MiFloraPoller library can read the following parameters: mac, backend, cache_timeout=600, retries=3, adapter='hci0'
     """
@@ -185,9 +191,7 @@ def main():
     """ Main function.
 
     """
-
-    #poll('C4:7C:8D:65:E2:1A', GatttoolBackend, 'hci1')
-    input_string_fake = "miflora_client: 1,GatttoolBackend,hci1$|$C4:7C:8D:65:E2:1A,C4:7C:8D:65:E2:1B"
+    input_string_fake = "miflora_client: 1,GatttoolBackend,hci1,10$|$C4:7C:8D:65:E2:1A,C4:7C:8D:65:E2:1B"
 
     while True:
         socket_input_process(input_string_fake)
