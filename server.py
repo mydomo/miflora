@@ -24,11 +24,9 @@ socket_ip = '0.0.0.0'
 socket_port = 54321
 
 miflora_plant = {}
-requested_device_mac = ''
 
 def socket_input_process(input_string):
     global miflora_plant
-    global requested_device_mac
 
     if input_string.startswith('miflora_client:'):
 
@@ -55,7 +53,6 @@ def socket_input_process(input_string):
                 if requested_device != "Never":
                     requested_device_data = device_string_cleaned(requested_device).split(',')
 
-                    requested_device_mac = device
                     requested_device_fw = requested_device_data[0]
                     requested_device_name = requested_device_data[1]
                     requested_device_temp = requested_device_data[2]
@@ -70,7 +67,7 @@ def socket_input_process(input_string):
                     # time difference is greater than the interval between polling.
                     if time_difference >= (srv_polling_time * 60):
                         # poll again
-                        poller = MiFloraPoller(requested_device_mac, GatttoolBackend, adapter=srv_adapter)
+                        poller = MiFloraPoller(device, GatttoolBackend, adapter=srv_adapter)
 
                         polled_device_fw = poller.firmware_version()
                         polled_device_name = poller.name()
@@ -81,12 +78,11 @@ def socket_input_process(input_string):
                         polled_device_batt = poller.parameter_value(MI_BATTERY)
                         polled_device_timestamp = int(time.time())
 
-                        miflora_plant[requested_device_mac] = [polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
-                        print (miflora_plant)
+                        miflora_plant[device] = [polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
 
                 if requested_device == "Never":
                     # poll for the first time this device
-                    poller = MiFloraPoller(requested_device_mac, GatttoolBackend, adapter=srv_adapter)
+                    poller = MiFloraPoller(device, GatttoolBackend, adapter=srv_adapter)
 
                     polled_device_fw = poller.firmware_version()
                     polled_device_name = poller.name()
@@ -97,8 +93,7 @@ def socket_input_process(input_string):
                     polled_device_batt = poller.parameter_value(MI_BATTERY)
                     polled_device_timestamp = int(time.time())
 
-                    miflora_plant[requested_device_mac] = [polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
-                    print (miflora_plant)
+                    miflora_plant[device] = [polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
 
 def input_string_stripped(string):
     output = string.replace("miflora_client: ", "").strip()
@@ -160,6 +155,7 @@ def main():
 
     while True:
         socket_input_process(input_string_fake)
+        print (miflora_plant)
         sleep(1)
 
 
