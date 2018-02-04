@@ -28,50 +28,89 @@ def socket_input_process(input_string):
 
     if input_string.startswith('miflora_client:'):
 
-        string_devices_to_analize = input_string.replace("miflora_devices: ", "").strip()
+        # server configuration
+        server_configuration = input_string_config(input_string).split(',')
+        # polling time (in minutes)
+        srv_polling_time = int(server_configuration[0])
+        # backend (default: GatttoolBackend)
+        srv_backend = server_configuration[1]
+        # adapter (default: hci0)
+        srv_adapter = server_configuration[2]
+
         # split each MAC address in a list in order to be processed
-        devices_to_analize = string_devices_to_analize.split(',')
+        devices_to_analize = input_string_devices(input_string).split(',')
 
         if len(devices_to_analize) >= 1:
 
             for device in devices_to_analize:
 
-                battery_level_moderator =  str(batt_lev_detected.get(device, "Never"))
-                # cleaning the value stored
-                cleaned_battery_level_moderator = str(battery_level_moderator.replace("[", "").replace("]", "").replace(" ", "").replace("'", ""))
-                # assign the battery level and the timestamp to different variables
-                if cleaned_battery_level_moderator == "Never":
-                    batt_need_update = True
-                    #print("ASK: Battery of: " + device + " has not previously scanned, starting now.")
+                # check if the device requested has already polled
+                requested_device = str(miflora_plant.get(device, "Never"))
 
-                if cleaned_battery_level_moderator != "Never":
-                    # DEVICE HAS A PREVIOUS STORED BATTERY LEVEL
-                    stored_batterylevel, stored_timestamp = cleaned_battery_level_moderator.split(',')
-                    time_difference = int(time.time()) - int(stored_timestamp)
-                    #print("ASK: Battery of: " + str(device) + " has being scanned: " + str(time_difference) + " seconds ago.")
-                    if ( (int(time_difference) >= int(min_inval_between_batt_level_readings)) or (str(stored_batterylevel) == '255') ):
-                        batt_need_update = True
-                        #print(device + " battery level need an update! Doing now!")
+                # if device requested was polled before extract all the data
+                if requested_device != "Never":
+                    requested_device_data = device_string_cleaned(requested_device).split(',')
 
-            if batt_need_update == True and read_value_lock == True:
-                return str(lang_READING_LOCK)
+                    requested_device_mac = device
+                    requested_device_fw = requested_device_data[0]
+                    requested_device_name = requested_device_data[1]
+                    requested_device_temp = requested_device_data[2]
+                    requested_device_moist = requested_device_data[3]
+                    requested_device_light = requested_device_data[4]
+                    requested_device_cond = requested_device_data[5]
+                    requested_device_batt = requested_device_data[6]
+                    requested_device_timestamp = requested_device_data[7]
 
-            if batt_need_update == True and read_value_lock == False:
-                return str(lang_READING_START)
+                    # check time since last poll
+                    time_difference = int(time.time()) - int(requested_device_timestamp)
+                    # time difference is greater than the interval between polling.
+                    if time_difference >= (srv_polling_time * 60):
+                        # poll again
+                        poller = MiFloraPoller(requested_device_mac, srv_backend, adapter=srv_adapter)
 
-            if batt_need_update == False:
-                return str(batt_lev_detected)
-        else:
-            mode = 'beacon_data'
+                        polled_device_fw = poller.firmware_version()
+                        polled_device_name = poller.name()
+                        polled_device_temp = poller.parameter_value(MI_TEMPERATURE)
+                        polled_device_moist = poller.parameter_value(MI_MOISTURE)
+                        polled_device_light = abs(poller.parameter_value(MI_LIGHT))
+                        polled_device_cond = poller.parameter_value(MI_CONDUCTIVITY)
+                        polled_device_batt = poller.parameter_value(MI_BATTERY)
+                        polled_device_timestamp = int(time.time())
+
+                        miflora_plant[requested_device_mac] = [polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
+
+                if requested_device == "Never":
+                    # poll for the first time this device
+                    poller = MiFloraPoller(requested_device_mac, srv_backend, adapter=srv_adapter)
+
+                    polled_device_fw = poller.firmware_version()
+                    polled_device_name = poller.name()
+                    polled_device_temp = poller.parameter_value(MI_TEMPERATURE)
+                    polled_device_moist = poller.parameter_value(MI_MOISTURE)
+                    polled_device_light = abs(poller.parameter_value(MI_LIGHT))
+                    polled_device_cond = poller.parameter_value(MI_CONDUCTIVITY)
+                    polled_device_batt = poller.parameter_value(MI_BATTERY)
+                    polled_device_timestamp = int(time.time())
+
+                    miflora_plant[requested_device_mac] = [polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
+
+
+def input_string_stripped(string):
+    output = string.replace("miflora_client: ", "").strip()
+    return output
 
 def input_string_config(string):
-    output = string.replace("miflora_client: ", "").strip().split('$$')
+    output = input_string_stripped(string).split('$|$')
     return output[0]
 
 
 def input_string_devices(string):
-    output = string.replace("miflora_client: ", "").strip().split('$$')
+    output = input_string_stripped(string).split('$|$')
     return output[1]
+
+def device_string_cleaned(string):
+    output = str(string.replace("[", "").replace("]", "").replace(" ", "").replace("'", ""))
+    return output
 
 
 
@@ -111,10 +150,11 @@ def main():
     """
 
     #poll('C4:7C:8D:65:E2:1A', GatttoolBackend, 'hci1')
-    input_string_fake = "miflora_client: 180,hci1$$C4:7C:8D:65:E2:1A,C4:7C:8D:65:E2:2A"
+    input_string_fake = "miflora_client: 180,GatttoolBackend,hci1$|$C4:7C:8D:65:E2:1A"
 
-    print(input_string_config(input_string_fake))
-    print(input_string_devices(input_string_fake))
+    while True:
+        print(socket_input_process(input_string_fake))
+        sleep(1)
 
 
 if __name__ == '__main__':
