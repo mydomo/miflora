@@ -99,8 +99,10 @@ def device_poller():
     global miflora_plant
 
     for device in miflora_plant:
-        # poll for the first time this device
         print(str(device))
+        for value in device:
+            print(str(value))
+        print ('------------')
         #poller = poll(device, srv_backend, srv_adapter)
 
 
