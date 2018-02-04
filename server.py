@@ -23,7 +23,7 @@ from miflora import miflora_scanner, available_backends, BluepyBackend, Gatttool
 socket_ip = '0.0.0.0'
 socket_port = 54321
 
-miflora_plant = ''
+miflora_plant = {}
 
 def socket_input_process(input_string):
     global miflora_plant
