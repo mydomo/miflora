@@ -98,11 +98,10 @@ def socket_input_process(input_string):
 def device_poller():
     global miflora_plant
 
-    while True:
-        for device in miflora_plant:
-            # poll for the first time this device
-            print(str(device))
-            #poller = poll(device, srv_backend, srv_adapter)
+    for device in miflora_plant:
+        # poll for the first time this device
+        print(str(device))
+        #poller = poll(device, srv_backend, srv_adapter)
 
 
 def input_string_stripped(string):
@@ -176,7 +175,7 @@ def main():
 
     while True:
         socket_input_process(input_string_fake)
-        print (miflora_plant)
+        device_poller()
         time.sleep(1)
 
 
