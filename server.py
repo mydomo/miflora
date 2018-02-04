@@ -159,7 +159,9 @@ def main():
 
     while True:
         socket_input_process(input_string_fake)
-        print(str(miflora_plant))
+        for keys,values in miflora_plant.items():
+            print(keys)
+            print(values)
         sleep(1)
 
 
