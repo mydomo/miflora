@@ -59,11 +59,11 @@ def socket_input_process(input_string):
                     # time difference is greater than the interval between polling.
                     if time_difference >= (srv_polling_time * 60):
                         # poll again
-                        poller = poll(device, srv_backend, adapter=srv_adapter)
+                        poller = poll(device, srv_backend, srv_adapter)
 
                 if (requested_device == "Never"):
                     # poll for the first time this device
-                    poller = poll(device, srv_backend, adapter=srv_adapter)
+                    poller = poll(device, srv_backend, srv_adapter)
 
 def input_string_stripped(string):
     output = string.replace("miflora_client: ", "").strip()
@@ -97,7 +97,7 @@ def poll(mac, backend, ble_adapter):
     """ Poll data from the sensor.
         MiFloraPoller library can read the following parameters: mac, backend, cache_timeout=600, retries=3, adapter='hci0'
     """
-    poller = MiFloraPoller(mac, GatttoolBackend)
+    poller = MiFloraPoller(mac, GatttoolBackend, adapter=ble_adapter)
 
     polled_device_fw = poller.firmware_version()
     polled_device_name = poller.name()
