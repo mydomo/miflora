@@ -108,7 +108,7 @@ def poll(mac, backend, ble_adapter):
     polled_device_batt = poller.parameter_value(MI_BATTERY)
     polled_device_timestamp = int(time.time())
 
-    miflora_plant[device] = [polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
+    miflora_plant[mac] = [polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
 
 
 
