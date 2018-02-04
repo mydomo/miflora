@@ -23,11 +23,11 @@ from miflora import miflora_scanner, available_backends, BluepyBackend, Gatttool
 socket_ip = '0.0.0.0'
 socket_port = 54321
 
-miflora_plant = {}
 global miflora_plant
 global srv_backend
 global srv_adapter
 global srv_polling_err
+miflora_plant = {}
 
 def socket_input_process(input_string):
 
