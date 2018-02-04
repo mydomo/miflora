@@ -47,7 +47,7 @@ def socket_input_process(input_string):
             for device in devices_to_analize:
 
                 # check if the device requested has already polled
-                requested_device = str(miflora_plant.get(device, "Never"))
+                requested_device = miflora_plant.get(device, "Never")
 
                 # if device requested was polled before extract all the data
                 if requested_device != "Never":
