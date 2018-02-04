@@ -151,7 +151,7 @@ def main():
     """
 
     #poll('C4:7C:8D:65:E2:1A', GatttoolBackend, 'hci1')
-    input_string_fake = "miflora_client: 180,GatttoolBackend,hci1$|$C4:7C:8D:65:E2:1A"
+    input_string_fake = "miflora_client: 1,GatttoolBackend,hci1$|$C4:7C:8D:65:E2:1A"
 
     while True:
         socket_input_process(input_string_fake)
