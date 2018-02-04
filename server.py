@@ -97,7 +97,7 @@ def socket_input_process(input_string):
 
 def device_poller():
     global miflora_plant
-    print miflora_plant
+    print (miflora_plant)
 
    # for device in miflora_plant:
     #    print(str(device))
