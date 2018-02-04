@@ -47,29 +47,63 @@ def socket_input_process(input_string):
             for device in devices_to_analize:
 
                 # check if the device requested has already polled
-                requested_device = str(miflora_plant.get(device, "Never"))
+                requested_device = str(miflora_plant.get(device, 'Never'))
 
-                # if device requested was polled before check timestamp
-                if requested_device != "Never":
+                if (requested_device == 'Never'):
+                # device is asked for the first time, need to get the values .
+                    polled_device_status = 'TOBEUPDATED'
+                    polled_device_fw = '?'
+                    polled_device_name = '?'
+                    polled_device_temp = '?'
+                    polled_device_moist = '?'
+                    polled_device_light = '?'
+                    polled_device_cond = '?'
+                    polled_device_batt = '?'
+                    polled_device_timestamp = int(time.time())
+
+                    miflora_plant[mac] = [polled_device_status,polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
+
+                
+                if requested_device != 'Never':
+                # device already polled, gather all the available data.
                     requested_device_data = device_string_cleaned(requested_device).split(',')
-                    requested_device_name = requested_device_data[1]
-                    requested_device_timestamp = requested_device_data[7]
 
-                    # check time since last poll
-                    time_difference = int(time.time()) - int(requested_device_timestamp)
-                    # time difference is greater than the interval between polling.
-                    if time_difference >= (srv_polling_time * 60):
-                        # poll to update old data
-                        poller = poll(device, srv_backend, srv_adapter)
+                    requested_device_status = requested_device_data[0]
+                    requested_device_fw = requested_device_data[1]
+                    requested_device_name = requested_device_data[2]
+                    requested_device_temp = requested_device_data[3]
+                    requested_device_moist = requested_device_data[4]
+                    requested_device_light = requested_device_data[5]
+                    requested_device_cond = requested_device_data[6]
+                    requested_device_batt = requested_device_data[7]
+                    requested_device_timestamp = requested_device_data[8]
 
-                    # check if device was not read properly (contains ERR)
-                    if requested_device_name == "ERR":
-                        # poll to update old data
-                        poller = poll(device, srv_backend, srv_adapter)
+                    if requested_device_status == 'OK':
+                        # check time since last poll
+                        time_difference = int(time.time()) - int(requested_device_timestamp)
+                        # time difference is greater than the interval between polling.
+                        if (time_difference >= (srv_polling_time * 60)):
+                            polled_device_status = 'EXPIRED'
+                            polled_device_fw = requested_device_fw
+                            polled_device_name = requested_device_name
+                            polled_device_temp = requested_device_temp
+                            polled_device_moist = requested_device_moist
+                            polled_device_light = requested_device_light
+                            polled_device_cond = requested_device_cond
+                            polled_device_batt = requested_device_batt
+                            polled_device_timestamp = int(time.time())
 
-                if (requested_device == "Never"):
-                    # poll for the first time this device
-                    poller = poll(device, srv_backend, srv_adapter)
+                            miflora_plant[mac] = [polled_device_status,polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
+
+def device_poller():
+    global miflora_plant
+
+    while True:
+        for device in miflora_plant:
+            # poll for the first time this device
+            print(str(device))
+            #poller = poll(device, srv_backend, srv_adapter)
+
 
 def input_string_stripped(string):
     output = string.replace("miflora_client: ", "").strip()
@@ -106,6 +140,7 @@ def poll(mac, backend, ble_adapter):
     try:
         poller = MiFloraPoller(mac, GatttoolBackend, adapter=ble_adapter)
 
+        polled_device_status = 'OK'
         polled_device_fw = poller.firmware_version()
         polled_device_name = poller.name()
         polled_device_temp = poller.parameter_value(MI_TEMPERATURE)
@@ -115,17 +150,18 @@ def poll(mac, backend, ble_adapter):
         polled_device_batt = poller.parameter_value(MI_BATTERY)
         polled_device_timestamp = int(time.time())
     except:
-        polled_device_fw = "ERR"
-        polled_device_name = "ERR"
-        polled_device_temp = "ERR"
-        polled_device_moist = "ERR"
-        polled_device_light = "ERR"
-        polled_device_cond = "ERR"
-        polled_device_batt = "ERR"
+        polled_device_status = 'ERROR'
+        polled_device_fw = '?'
+        polled_device_name = '?'
+        polled_device_temp = '?'
+        polled_device_moist = '?'
+        polled_device_light = '?'
+        polled_device_cond = '?'
+        polled_device_batt = '?'
         polled_device_timestamp = int(time.time())
 
 
-    miflora_plant[mac] = [polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
+    miflora_plant[mac] = [polled_device_status,polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
 
 
 
