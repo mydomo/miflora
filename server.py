@@ -58,7 +58,7 @@ def socket_input_process(input_string):
                     time_difference = int(time.time()) - int(requested_device_timestamp)
                     # time difference is greater than the interval between polling.
                     if time_difference >= (srv_polling_time * 60):
-                        # poll again
+                        # poll to update old data
                         poller = poll(device, srv_backend, srv_adapter)
 
                 if (requested_device == "Never"):
@@ -119,7 +119,7 @@ def main():
     """
 
     #poll('C4:7C:8D:65:E2:1A', GatttoolBackend, 'hci1')
-    input_string_fake = "miflora_client: 1,GatttoolBackend,hci1$|$C4:7C:8D:65:E2:1A"
+    input_string_fake = "miflora_client: 1,GatttoolBackend,hci1$|$C4:7C:8D:65:E2:1A,C4:7C:8D:65:E2:1B"
 
     while True:
         socket_input_process(input_string_fake)
