@@ -82,6 +82,7 @@ def socket_input_process(input_string):
                         polled_device_timestamp = int(time.time())
 
                         miflora_plant[requested_device_mac] = [polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
+                        print (miflora_plant)
 
                 if requested_device == "Never":
                     # poll for the first time this device
@@ -97,7 +98,7 @@ def socket_input_process(input_string):
                     polled_device_timestamp = int(time.time())
 
                     miflora_plant[requested_device_mac] = [polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
-
+                    print (miflora_plant)
 
 def input_string_stripped(string):
     output = string.replace("miflora_client: ", "").strip()
@@ -159,9 +160,6 @@ def main():
 
     while True:
         socket_input_process(input_string_fake)
-        for keys,values in miflora_plant.items():
-            print(keys)
-            print(values)
         sleep(1)
 
 
