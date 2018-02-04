@@ -23,8 +23,10 @@ from miflora import miflora_scanner, available_backends, BluepyBackend, Gatttool
 socket_ip = '0.0.0.0'
 socket_port = 54321
 
+miflora_plant = ''
+
 def socket_input_process(input_string):
-    global devices_to_analize
+    global miflora_plant
 
     if input_string.startswith('miflora_client:'):
 
