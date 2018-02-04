@@ -70,7 +70,7 @@ def socket_input_process(input_string):
                     # time difference is greater than the interval between polling.
                     if time_difference >= (srv_polling_time * 60):
                         # poll again
-                        poller = MiFloraPoller(requested_device_mac, srv_backend, adapter=srv_adapter)
+                        poller = MiFloraPoller(requested_device_mac, GatttoolBackend, adapter=srv_adapter)
 
                         polled_device_fw = poller.firmware_version()
                         polled_device_name = poller.name()
