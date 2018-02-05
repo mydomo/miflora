@@ -60,12 +60,7 @@ def socket_input_process(input_string):
 
                 # check if the device requested has already polled
                 requested_device = str(miflora_plant.get(device, 'Never'))
-                print (device)
-                print (requested_device)
-                print (miflora_plant)
-
                 if (requested_device == 'Never'):
-                    print ("Device not found in dictionary")
                 # device is asked for the first time, need to get the values .
                     polled_device_status = 'REQUESTED'
                     polled_device_fw = '?'
@@ -148,6 +143,8 @@ def device_poller():
                 requested_device_timeasked = requested_device_data[9]
 
                 # Check that the last time the device was asked is less than the polling timeout.
+                print(str(time_difference(requested_device_timeasked)))
+                print (str(srv_polling_timeout * 60))
                 if (int(time_difference(requested_device_timeasked)) < int(srv_polling_timeout * 60)):
                     print ('Timedifference is less than polling timeout')
                     if (requested_device_status == 'REQUESTED') or (requested_device_status == 'EXPIRED'):
