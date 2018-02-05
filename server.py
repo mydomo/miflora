@@ -129,8 +129,8 @@ def socket_input_process(input_string):
 def device_poller():
     global thread_controller
 
-    if (thread_controller >= 1):
-        while True:
+    while True:
+        if (thread_controller >= 1):
             for device in miflora_plant.copy():
                 requested_device = str(miflora_plant.get(device, 'Never'))
                 if requested_device != 'Never':
