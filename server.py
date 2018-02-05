@@ -126,7 +126,7 @@ def socket_input_process(input_string):
 
 def device_poller():
     while True:
-        for device in miflora_plant:
+        for device in miflora_plant.copy():
             requested_device = str(miflora_plant.get(device, 'Never'))
             if requested_device != 'Never':
                 # device exist, gather all the available data.
