@@ -132,44 +132,46 @@ def device_poller():
     while True:
         print('Device Poller started')
         print (thread_controller)
-        if (thread_controller >= 1):
-            for device in miflora_plant.copy():
-                requested_device = str(miflora_plant.get(device, 'Never'))
-                if requested_device != 'Never':
-                    # device exist, gather all the available data.
-                    requested_device_data = device_string_cleaned(requested_device).split(',')
+        try:
+            if (thread_controller >= 1):
+                for device in miflora_plant.copy():
+                    requested_device = str(miflora_plant.get(device, 'Never'))
+                    if requested_device != 'Never':
+                        # device exist, gather all the available data.
+                        requested_device_data = device_string_cleaned(requested_device).split(',')
 
-                    requested_device_status = requested_device_data[0]
-                    requested_device_fw = requested_device_data[1]
-                    requested_device_name = requested_device_data[2]
-                    requested_device_temp = requested_device_data[3]
-                    requested_device_moist = requested_device_data[4]
-                    requested_device_light = requested_device_data[5]
-                    requested_device_cond = requested_device_data[6]
-                    requested_device_batt = requested_device_data[7]
-                    requested_device_timestamp = requested_device_data[8]
-                    requested_device_timeasked = requested_device_data[9]
+                        requested_device_status = requested_device_data[0]
+                        requested_device_fw = requested_device_data[1]
+                        requested_device_name = requested_device_data[2]
+                        requested_device_temp = requested_device_data[3]
+                        requested_device_moist = requested_device_data[4]
+                        requested_device_light = requested_device_data[5]
+                        requested_device_cond = requested_device_data[6]
+                        requested_device_batt = requested_device_data[7]
+                        requested_device_timestamp = requested_device_data[8]
+                        requested_device_timeasked = requested_device_data[9]
 
-                    # Check that the last time the device was asked is less than the polling timeout.
+                        # Check that the last time the device was asked is less than the polling timeout.
 
-                    #print(str(time_difference(requested_device_timeasked)))
-                    #print (str(srv_polling_timeout * 60))
+                        #print(str(time_difference(requested_device_timeasked)))
+                        #print (str(srv_polling_timeout * 60))
 
 
-                    if (int(time_difference(requested_device_timeasked)) < int(srv_polling_timeout * 60)):
-                        print ('Timedifference is less than polling timeout')
-                        if (requested_device_status == 'REQUESTED') or (requested_device_status == 'EXPIRED'):
-                            poller = poll(device, srv_backend, srv_adapter, requested_device_timeasked)
-                        if requested_device_status == 'ERROR':
-                            if (time_difference(requested_device_timestamp) >= int(srv_polling_err * 60)):
+                        if (int(time_difference(requested_device_timeasked)) < int(srv_polling_timeout * 60)):
+                            print ('Timedifference is less than polling timeout')
+                            if (requested_device_status == 'REQUESTED') or (requested_device_status == 'EXPIRED'):
                                 poller = poll(device, srv_backend, srv_adapter, requested_device_timeasked)
-                    # If the polling timeout has being reached delete from the device dictionary the key.
-                    if (int(time_difference(requested_device_timeasked)) >= int(srv_polling_timeout * 60)):
-                        print ('Timedifference is GREATER than polling timeout')
-                        miflora_plant.pop(device, None)
+                            if requested_device_status == 'ERROR':
+                                if (time_difference(requested_device_timestamp) >= int(srv_polling_err * 60)):
+                                    poller = poll(device, srv_backend, srv_adapter, requested_device_timeasked)
+                        # If the polling timeout has being reached delete from the device dictionary the key.
+                        if (int(time_difference(requested_device_timeasked)) >= int(srv_polling_timeout * 60)):
+                            print ('Timedifference is GREATER than polling timeout')
+                            miflora_plant.pop(device, None)
 
-            time.sleep(1)
-
+                time.sleep(1)
+        except:
+            print('Erron in device poller module')
 def time_difference(timestamp):
     output = int(time.time()) - int(timestamp)
     return output
