@@ -148,7 +148,7 @@ def device_poller():
                 #print(str(time_difference(requested_device_timeasked)))
                 #print (str(srv_polling_timeout * 60))
                 print (str(requested_device_timeasked))
-                print (srv_polling_timeout)
+                print (str(srv_polling_timeout))
 
 
                 if (int(time_difference(requested_device_timeasked)) < int(srv_polling_timeout * 60)):
