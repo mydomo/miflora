@@ -128,6 +128,8 @@ def socket_input_process(input_string):
 
 
 def device_poller():
+    global thread_controller
+
     if (thread_controller >= 1):
         while True:
             for device in miflora_plant.copy():
