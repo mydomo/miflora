@@ -31,6 +31,8 @@ global srv_adapter
 srv_adapter = ''
 global srv_polling_err
 srv_polling_err = ''
+global srv_polling_timeout
+srv_polling_timeout = ''
 
 def socket_input_process(input_string):
 
@@ -44,8 +46,10 @@ def socket_input_process(input_string):
         srv_backend = server_configuration[1]
         # adapter (default: hci0)
         srv_adapter = server_configuration[2]
-        # time to wait before polling again a device that had an error during the reading (seconds)
+        # time to wait before polling again a device that had an error during the reading (in minutes)
         srv_polling_err = server_configuration[3]
+        # time to wait before stopping polling a device since the last request (in minutes)
+        srv_polling_timeout = server_configuration[4]
 
         # split each MAC address in a list in order to be processed
         devices_to_analize = input_string_devices(input_string).split(',')
@@ -68,8 +72,9 @@ def socket_input_process(input_string):
                     polled_device_cond = '?'
                     polled_device_batt = '?'
                     polled_device_timestamp = int(time.time())
+                    polled_device_timeasked = int(time.time())
 
-                    miflora_plant[device] = [polled_device_status,polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
+                    miflora_plant[device] = [polled_device_status,polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp,polled_device_timeasked]
 
                 
                 if requested_device != 'Never':
@@ -85,6 +90,7 @@ def socket_input_process(input_string):
                     requested_device_cond = requested_device_data[6]
                     requested_device_batt = requested_device_data[7]
                     requested_device_timestamp = requested_device_data[8]
+                    requested_device_timeasked = int(time.time())
 
                     if requested_device_status == 'OK':
                         # check time since last poll
@@ -99,9 +105,10 @@ def socket_input_process(input_string):
                             polled_device_light = requested_device_light
                             polled_device_cond = requested_device_cond
                             polled_device_batt = requested_device_batt
-                            polled_device_timestamp = int(time.time())
+                            polled_device_timestamp = requested_device_timestamp
+                            polled_device_timeasked = int(time.time())
 
-                            miflora_plant[device] = [polled_device_status,polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
+                            miflora_plant[device] = [polled_device_status,polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp,polled_device_timeasked]
 
 def device_poller():
     while True:
@@ -120,16 +127,24 @@ def device_poller():
                 requested_device_cond = requested_device_data[6]
                 requested_device_batt = requested_device_data[7]
                 requested_device_timestamp = requested_device_data[8]
+                requested_device_timeasked = requested_device_data[9]
 
-                if (requested_device_status == 'REQUESTED') or (requested_device_status == 'EXPIRED'):
-                    poller = poll(device, srv_backend, srv_adapter)
-                if requested_device_status == 'ERROR':
-                    time_difference = int(time.time()) - int(requested_device_timestamp)
-                    if (time_difference >= (srv_polling_err * 60)):
-                        poller = poll(device, srv_backend, srv_adapter)
+                # Check that the last time the device was asked is less than the polling timeout.
+                if (time_difference(requested_device_timeasked) < (srv_polling_timeout * 60)):
+                    if (requested_device_status == 'REQUESTED') or (requested_device_status == 'EXPIRED'):
+                        poller = poll(device, srv_backend, srv_adapter, requested_device_timeasked)
+                    if requested_device_status == 'ERROR':
+                        if (time_difference(requested_device_timestamp) >= (srv_polling_err * 60)):
+                            poller = poll(device, srv_backend, srv_adapter, requested_device_timeasked)
+                # If the polling timeout has being reached delete from the device dictionary the key.
+                if (time_difference(requested_device_timeasked) >= (srv_polling_timeout * 60)):
+                    miflora_plant.pop(device, None)
 
         time.sleep(1)
 
+def time_difference(timestamp):
+    output = int(time.time()) - int(timestamp)
+    return output
 
 def input_string_stripped(string):
     output = string.replace("miflora_client: ", "").strip()
@@ -158,7 +173,7 @@ def valid_miflora_mac(mac, pat=re.compile(r"C4:7C:8D:[0-9A-F]{2}:[0-9A-F]{2}:[0-
     return mac
 
 
-def poll(mac, backend, ble_adapter):
+def poll(mac, backend, ble_adapter, requested_device_timeasked):
     """ Poll data from the sensor.
         MiFloraPoller library can read the following parameters: mac, backend, cache_timeout=600, retries=3, adapter='hci0'
     """
@@ -174,6 +189,7 @@ def poll(mac, backend, ble_adapter):
         polled_device_cond = poller.parameter_value(MI_CONDUCTIVITY)
         polled_device_batt = poller.parameter_value(MI_BATTERY)
         polled_device_timestamp = int(time.time())
+        polled_device_timeasked = requested_device_timeasked
     except:
         polled_device_status = 'ERROR'
         polled_device_fw = '?'
@@ -184,9 +200,10 @@ def poll(mac, backend, ble_adapter):
         polled_device_cond = '?'
         polled_device_batt = '?'
         polled_device_timestamp = int(time.time())
+        polled_device_timeasked = requested_device_timeasked
 
 
-    miflora_plant[mac] = [polled_device_status,polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp]
+    miflora_plant[mac] = [polled_device_status,polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp,polled_device_timeasked]
 
 
 
@@ -194,8 +211,10 @@ def main():
     """ Main function.
 
     """
-    input_string_fake = "miflora_client: 1,GatttoolBackend,hci1,10$|$C4:7C:8D:65:E2:1A,C4:7C:8D:65:E2:1B"
+    input_string_fake = "miflora_client: 1,GatttoolBackend,hci1,10,5$|$C4:7C:8D:65:E2:1A"
+    input_string_fake2 = "miflora_client: 1,GatttoolBackend,hci1,10,5$|$C4:7C:8D:65:E2:1A,C4:7C:8D:65:E2:1B"
 
+    socket_input_process(input_string_fake2)
     while True:
         socket_input_process(input_string_fake)
         print(miflora_plant)
