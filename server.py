@@ -36,6 +36,7 @@ global thread_controller
 
 def socket_input_process(input_string):
     global thread_controller
+    global srv_polling_timeout
 
 
     if input_string.startswith('miflora_client:'):
