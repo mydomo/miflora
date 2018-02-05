@@ -60,6 +60,7 @@ def socket_input_process(input_string):
 
                 # check if the device requested has already polled
                 requested_device = str(miflora_plant.copy().get(device, 'Never'))
+                print ("Looking for: ".str(device))
 
                 if (requested_device == 'Never'):
                     print ("Device not found in dictionary")
