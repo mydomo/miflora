@@ -158,10 +158,8 @@ def device_poller():
                         #print(str(time_difference(requested_device_timeasked)))
                         #print (str(srv_polling_timeout * 60))
                         
-                        print ('POLLING TIMEOUT is: ' + str(srv_polling_timeout * 60))
-                        print ('TIMEOUT TIME DIFFERENCE is: ' + str(time_difference(requested_device_timeasked)))
-                        print ('ERROR TIMEOUT is: ' + str(srv_polling_timeout * 60))
-                        print ('ERROR TIMEOUT TIME DIFFERENCE is: ' + str(time_difference(requested_device_timestamp)))
+                        print ('POLLING TIMEOUT is: ' + str(time_difference(requested_device_timeasked)) + ' / ' + str(srv_polling_timeout * 60))
+                        print ('ERROR TIMEOUT is: ' + str(time_difference(requested_device_timestamp)) + ' / ' + str(srv_polling_err * 60))
 
                         if (int(time_difference(requested_device_timeasked)) < int(srv_polling_timeout * 60)):
                             if (requested_device_status == 'REQUESTED') or (requested_device_status == 'EXPIRED'):
