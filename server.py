@@ -159,10 +159,12 @@ def device_poller():
 
                         #print(str(time_difference(requested_device_timeasked)))
                         #print (str(srv_polling_timeout * 60))
-
+                        print ('POLLING TIMEOUT is: ' + int(srv_polling_timeout * 60))
+                        print ('TIMEOUT TIME DIFFERENCE is: ' + (int(time_difference(requested_device_timeasked))))
+                        print ('ERROR TIMEOUT is: ' + int(srv_polling_timeout * 60))
+                        print ('ERROR TIMEOUT TIME DIFFERENCE is: ' + (int(time_difference(requested_device_timestamp))))
 
                         if (int(time_difference(requested_device_timeasked)) < int(srv_polling_timeout * 60)):
-                            print ('Timedifference is: ' + (int(time_difference(requested_device_timeasked)) < int(srv_polling_timeout * 60)))
                             if (requested_device_status == 'REQUESTED') or (requested_device_status == 'EXPIRED'):
                                 poller = poll(device, srv_backend, srv_adapter, requested_device_timeasked)
                             if requested_device_status == 'ERROR':
@@ -170,7 +172,6 @@ def device_poller():
                                     poller = poll(device, srv_backend, srv_adapter, requested_device_timeasked)
                         # If the polling timeout has being reached delete from the device dictionary the key.
                         if (int(time_difference(requested_device_timeasked)) >= int(srv_polling_timeout * 60)):
-                            print ('Timedifference is GREATER than polling timeout')
                             miflora_plant.pop(device, None)
 
                 time.sleep(1)
