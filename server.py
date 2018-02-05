@@ -59,9 +59,10 @@ def socket_input_process(input_string):
             for device in devices_to_analize:
 
                 # check if the device requested has already polled
-                requested_device = str(miflora_plant.get(device, 'Never'))
+                requested_device = str(miflora_plant.copy().get(device, 'Never'))
 
                 if (requested_device == 'Never'):
+                    print ("Device not found in dictionary")
                 # device is asked for the first time, need to get the values .
                     polled_device_status = 'REQUESTED'
                     polled_device_fw = '?'
