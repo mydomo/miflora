@@ -49,9 +49,9 @@ def socket_input_process(input_string):
         # adapter (default: hci0)
         srv_adapter = server_configuration[2]
         # time to wait before polling again a device that had an error during the reading (in minutes)
-        srv_polling_err = server_configuration[3]
+        srv_polling_err = int(server_configuration[3])
         # time to wait before stopping polling a device since the last request (in minutes)
-        srv_polling_timeout = server_configuration[4]
+        srv_polling_timeout = int(server_configuration[4])
 
         # split each MAC address in a list in order to be processed
         devices_to_analize = input_string_devices(input_string).split(',')
