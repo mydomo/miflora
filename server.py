@@ -90,7 +90,7 @@ def socket_input_process(input_string):
                     requested_device_cond = requested_device_data[6]
                     requested_device_batt = requested_device_data[7]
                     requested_device_timestamp = requested_device_data[8]
-                    requested_device_timeasked = int(time.time())
+                    requested_device_timeasked = requested_device_data[9]
 
                     if requested_device_status == 'OK':
                         # Check if the device need to be polled again.
@@ -107,6 +107,22 @@ def socket_input_process(input_string):
                             polled_device_timeasked = int(time.time())
 
                             miflora_plant[device] = [polled_device_status,polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp,polled_device_timeasked]
+
+                    else:
+
+                        polled_device_status = requested_device_status
+                        polled_device_fw = requested_device_fw
+                        polled_device_name = requested_device_name
+                        polled_device_temp = requested_device_temp
+                        polled_device_moist = requested_device_moist
+                        polled_device_light = requested_device_light
+                        polled_device_cond = requested_device_cond
+                        polled_device_batt = requested_device_batt
+                        polled_device_timestamp = requested_device_timestamp
+                        polled_device_timeasked = int(time.time()) 
+
+                        miflora_plant[device] = [polled_device_status,polled_device_fw,polled_device_name,polled_device_temp,polled_device_moist,polled_device_light,polled_device_cond,polled_device_batt,polled_device_timestamp,polled_device_timeasked]
+
 
 def device_poller():
     while True:
