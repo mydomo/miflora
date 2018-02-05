@@ -31,6 +31,7 @@ global srv_adapter
 srv_adapter = ''
 global srv_polling_err
 global srv_polling_timeout
+srv_polling_timeout = 0
 global thread_controller
 
 def socket_input_process(input_string):
@@ -172,6 +173,8 @@ def device_poller():
                 time.sleep(1)
         except:
             print('Erron in device poller module')
+            time.sleep(1)
+
 def time_difference(timestamp):
     output = int(time.time()) - int(timestamp)
     return output
