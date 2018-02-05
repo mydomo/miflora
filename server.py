@@ -32,7 +32,6 @@ srv_adapter = ''
 global srv_polling_err
 srv_polling_err = 0
 global srv_polling_timeout
-srv_polling_timeout = 0
 
 def socket_input_process(input_string):
 
