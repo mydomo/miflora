@@ -30,9 +30,9 @@ srv_backend = ''
 global srv_adapter
 srv_adapter = ''
 global srv_polling_err
-srv_polling_err = ''
+srv_polling_err = 0
 global srv_polling_timeout
-srv_polling_timeout = ''
+srv_polling_timeout = 0
 
 def socket_input_process(input_string):
 
@@ -125,7 +125,6 @@ def socket_input_process(input_string):
 
 
 def device_poller():
-    requested_device_timeasked = 0
     while True:
         for device in miflora_plant:
             requested_device = str(miflora_plant.get(device, 'Never'))
