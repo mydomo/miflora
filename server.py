@@ -23,21 +23,24 @@ from miflora import miflora_scanner, available_backends, BluepyBackend, Gatttool
 socket_ip = '0.0.0.0'
 socket_port = 54321
 
-global miflora_plant
+##########- VARIABLE INITIALIZATION -##########
+
 miflora_plant = {}
-global srv_backend
+srv_polling_time = 0
 srv_backend = ''
-global srv_adapter
 srv_adapter = ''
-global srv_polling_err
-global srv_polling_timeout
+srv_polling_err = 0
 srv_polling_timeout = 0
-global thread_controller
+thread_controller = 0
 
 def socket_input_process(input_string):
-    global thread_controller
+    global miflora_plant
+    global srv_polling_time
+    global srv_backend
+    global srv_adapter
+    global srv_polling_err
     global srv_polling_timeout
-
+    global thread_controller
 
     if input_string.startswith('miflora_client:'):
 
@@ -60,7 +63,7 @@ def socket_input_process(input_string):
         devices_to_analize = input_string_devices(input_string).split(',')
 
         if len(devices_to_analize) >= 1:
-            # there is a device the processing thread can start
+            # There is at least one device to poll so the processing thread can start
             thread_controller = 1
 
             for device in devices_to_analize:
@@ -131,13 +134,8 @@ def socket_input_process(input_string):
 
 
 def device_poller():
-    global thread_controller
-    global srv_polling_timeout
-
+    global miflora_plant
     while True:
-        print('Device Poller started')
-        print (thread_controller)
-        print (srv_polling_timeout)
         try:
             if (thread_controller >= 1):
                 for device in miflora_plant.copy():
@@ -164,7 +162,7 @@ def device_poller():
 
 
                         if (int(time_difference(requested_device_timeasked)) < int(srv_polling_timeout * 60)):
-                            print ('Timedifference is less than polling timeout')
+                            print ('Timedifference is: '.(int(time_difference(requested_device_timeasked)) < int(srv_polling_timeout * 60)))
                             if (requested_device_status == 'REQUESTED') or (requested_device_status == 'EXPIRED'):
                                 poller = poll(device, srv_backend, srv_adapter, requested_device_timeasked)
                             if requested_device_status == 'ERROR':
