@@ -32,7 +32,6 @@ srv_adapter = ''
 global srv_polling_err
 global srv_polling_timeout
 global thread_controller
-thread_controller = 0
 
 def socket_input_process(input_string):
     global thread_controller
