@@ -232,9 +232,9 @@ def main():
     input_string_fake = "miflora_client: 1,GatttoolBackend,hci1,10,5$|$C4:7C:8D:65:E2:1A"
     input_string_fake2 = "miflora_client: 1,GatttoolBackend,hci1,10,5$|$C4:7C:8D:65:E2:1A,C4:7C:8D:65:E2:1B"
 
-    socket_input_process(input_string_fake2)
+    #socket_input_process(input_string_fake2)
     while True:
-        socket_input_process(input_string_fake)
+        socket_input_process(input_string_fake2)
         print(miflora_plant)
         time.sleep(1)
 
