@@ -129,10 +129,12 @@ def socket_input_process(input_string):
 
 def device_poller():
     global thread_controller
+    global srv_polling_timeout
 
     while True:
         print('Device Poller started')
         print (thread_controller)
+        print (srv_polling_timeout)
         try:
             if (thread_controller >= 1):
                 for device in miflora_plant.copy():
@@ -172,7 +174,7 @@ def device_poller():
 
                 time.sleep(1)
         except:
-            print('Erron in device poller module')
+            print('Error in device_poller() thread.')
             time.sleep(1)
 
 def time_difference(timestamp):
