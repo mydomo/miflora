@@ -124,7 +124,7 @@ def socket_input_process(input_string):
 
 
 def device_poller():
-global srv_polling_timeout
+    global srv_polling_timeout
     while True:
         for device in miflora_plant.copy():
             requested_device = str(miflora_plant.get(device, 'Never'))
