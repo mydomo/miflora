@@ -93,10 +93,8 @@ def socket_input_process(input_string):
                     requested_device_timeasked = int(time.time())
 
                     if requested_device_status == 'OK':
-                        # check time since last poll
-                        time_difference = int(time.time()) - int(requested_device_timestamp)
-                        # time difference is greater than the interval between polling.
-                        if (time_difference >= (srv_polling_time * 60)):
+                        # Check if the device need to be polled again.
+                        if (int(time_difference(requested_device_timestamp)) >= int(srv_polling_time * 60)):
                             polled_device_status = 'EXPIRED'
                             polled_device_fw = requested_device_fw
                             polled_device_name = requested_device_name
@@ -130,14 +128,14 @@ def device_poller():
                 requested_device_timeasked = requested_device_data[9]
 
                 # Check that the last time the device was asked is less than the polling timeout.
-                if (time_difference(requested_device_timeasked) < (srv_polling_timeout * 60)):
+                if (int(time_difference(requested_device_timeasked)) < int(srv_polling_timeout * 60)):
                     if (requested_device_status == 'REQUESTED') or (requested_device_status == 'EXPIRED'):
                         poller = poll(device, srv_backend, srv_adapter, requested_device_timeasked)
                     if requested_device_status == 'ERROR':
-                        if (time_difference(requested_device_timestamp) >= (srv_polling_err * 60)):
+                        if (time_difference(requested_device_timestamp) >= int(srv_polling_err * 60)):
                             poller = poll(device, srv_backend, srv_adapter, requested_device_timeasked)
                 # If the polling timeout has being reached delete from the device dictionary the key.
-                if (time_difference(requested_device_timeasked) >= (srv_polling_timeout * 60)):
+                if (int(time_difference(requested_device_timeasked)) >= int(srv_polling_timeout * 60)):
                     miflora_plant.pop(device, None)
 
         time.sleep(1)
