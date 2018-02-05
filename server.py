@@ -56,8 +56,6 @@ def socket_input_process(input_string):
         srv_polling_err = int(server_configuration[3])
         # time to wait before stopping polling a device since the last request (in minutes)
         srv_polling_timeout = int(server_configuration[4])
-        print (srv_polling_timeout)
-        print (int(server_configuration[4]))
 
         # split each MAC address in a list in order to be processed
         devices_to_analize = input_string_devices(input_string).split(',')
@@ -160,10 +158,10 @@ def device_poller():
                         #print(str(time_difference(requested_device_timeasked)))
                         #print (str(srv_polling_timeout * 60))
                         
-                        #print ('POLLING TIMEOUT is: ' + int(srv_polling_timeout * 60))
-                        #print ('TIMEOUT TIME DIFFERENCE is: ' + (int(time_difference(requested_device_timeasked))))
-                        #print ('ERROR TIMEOUT is: ' + int(srv_polling_timeout * 60))
-                        #print ('ERROR TIMEOUT TIME DIFFERENCE is: ' + (int(time_difference(requested_device_timestamp))))
+                        print ('POLLING TIMEOUT is: ' + str(srv_polling_timeout * 60))
+                        print ('TIMEOUT TIME DIFFERENCE is: ' + str(time_difference(requested_device_timeasked)))
+                        print ('ERROR TIMEOUT is: ' + str(srv_polling_timeout * 60))
+                        print ('ERROR TIMEOUT TIME DIFFERENCE is: ' + str(time_difference(requested_device_timestamp)))
 
                         if (int(time_difference(requested_device_timeasked)) < int(srv_polling_timeout * 60)):
                             if (requested_device_status == 'REQUESTED') or (requested_device_status == 'EXPIRED'):
