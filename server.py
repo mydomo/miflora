@@ -130,6 +130,8 @@ def device_poller():
     global thread_controller
 
     while True:
+        print('Device Poller started')
+        print (thread_controller)
         if (thread_controller >= 1):
             for device in miflora_plant.copy():
                 requested_device = str(miflora_plant.get(device, 'Never'))
